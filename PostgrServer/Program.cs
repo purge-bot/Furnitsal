@@ -12,7 +12,7 @@ namespace PostgrServer
 {
     class Program
     {
-        public static DataBase dataBase;
+        public static DataBase dataBaseServer;
         public static Dictionary<string, User> Users = new Dictionary<string, User>();
 
         static void Main(string[] args)
@@ -30,7 +30,7 @@ namespace PostgrServer
 
                 try
                 {
-                    dataBase = new DataBase(loginDB, passwordDB);
+                    dataBaseServer = new DataBase(loginDB, passwordDB);
                     Console.WriteLine("Подключено к БД");
                 }
                 catch (Exception e)
@@ -83,49 +83,63 @@ namespace PostgrServer
             Get = 201
         }
 
-        public static bool Selector(byte executeCode, byte[] requestBody, User user)
+        private static Request Selector(Request inputRequest, User user)
         {
-            switch (executeCode)
+            switch (inputRequest.ExecuteCode)
             {
                 case (byte)Code.VerificationUser:
                     
-                    if(user.Verification(requestBody, dataBase))
+                    if(user.Verification(inputRequest.RequestBody, dataBaseServer))
                     {
-                        return true;
+                        DataBase clientDB = new DataBase();
+                        clientDB.Connect(user.Role, "3520189");
+                        user.ConnectionDB = clientDB.Connection;
+                        Users.Add(user.IP, user);
+                        return new Request("Done!", false, (byte)Code.SuccessVerification);
                     }
                     else
                     {
-                        return false;
-                    }    
-                case (byte)Code.Post:
-                    return false;
+                        return new Request("Fail!", false, (byte)Code.FailVerification);
+                    }
 
+                case (byte)Code.Post:
+                    return new Request("Done!", false, (byte)Code.Post);
             }
-            return false;
+
+            return new Request("Code Error");
         }
 
-        static void ClientThread(object clientSocket)
+        private static void ClientThread(object clientSocket)
         {
             Client client = new Client((TcpClient)clientSocket);
+
+            if (Users.ContainsKey(client.IPClient))
+            {
+                client.ClientClose();
+                return;
+            }
+            
+            if (Users.ContainsKey(client.IPClient))
+            {
+                Console.WriteLine("Клиент отключен");
+                client.ClientClose();
+                return;
+            }
+
             Console.WriteLine("Клиент подключен: " + client.IPClient);
 
             User user = new User();
-            DataBase clientDB;
+            user.IP = client.IPClient;
 
             while (client.socket.Connected)
             {
 
                 Request inputRequest = client.ReadRequest();
 
-                if (Users.ContainsKey(client.IPClient))
-                {
-                    Console.WriteLine("Клиент отключен");
-                    client.ClientClose();
-                    return;
-                }
-
                 if (inputRequest.ExecuteCode == 255)
                 {
+                    Users.Remove(user.IP);
+                    Console.WriteLine(inputRequest.ExecuteCode + " - код выполнения;\n" + BitConverter.ToInt32(inputRequest.Length, 0) + " - длина сообщения;\n" + inputRequest.ToString() + " - сообщение.");
                     user.ConnectionDB?.Close();
                     Console.WriteLine("Клиент отключен");
                     client.ClientClose();
@@ -136,27 +150,13 @@ namespace PostgrServer
 
                 if (Enum.IsDefined(typeof(Code), inputRequest.ExecuteCode))
                 {
-                    if (Selector(inputRequest.ExecuteCode, inputRequest.RequestBody, user))
-                    {
-                        clientDB = new DataBase();
-                        clientDB.Connect(user.Role, "3520189");
-                        user.ConnectionDB = clientDB.Connection;
-                        client.PostRequest(new Request("Done!", false, (byte)Code.SuccessVerification));
-                        Users.Add(client.IPClient, user);
-                        foreach (var item in Users)
-                        {
-                            Console.WriteLine(item.Key);
-                        }
-                    } 
-                    else
-                    {
-                        client.PostRequest(new Request("Fail!", false, (byte)Code.FailVerification));
-                    }
+
+                    client.PostRequest(Selector(inputRequest, user));
                 }
 
                 if (client.socket.Connected == false)
                 {
-                    Users.Remove(client.IPClient);
+                    Users.Remove(user.IP);
 
                     foreach (var item in Users)
                     {
@@ -165,20 +165,6 @@ namespace PostgrServer
 
                     return;
                 }
-
-                /*if (client.userDB == null && inputRequest.ExecuteCode == 100)
-                {
-                    client.ConnectDataBase();
-                    client.PostRequest(new Request("Success connection"));
-                    client.socket.ReceiveTimeout = 0;
-                }
-                else
-                {
-                    if (inputRequest.ExecuteCode == 1)
-                        client.PostRequest(new Request(@"C:\Users\Anton\Desktop\shop\qwert.png", true));
-                    else
-                        client.PostRequest(new Request("Message"));
-                }*/
             }
         }
     }

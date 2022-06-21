@@ -27,13 +27,8 @@ namespace PostgrServer
             string[] loginPass = PrepareData(requestBody);
             string login = loginPass[0];
             string password = loginPass[1];
-            string connectionParamLoginer = $"Server={dataBase.Ip};Port={dataBase.Port};UserId=postgres;Password=wxkmjdt76;Database=shop";
 
             string sqlCheckUser = $"SELECT login, password, role FROM checkuser.managers where login = :login";
-
-            /*dataBase.connection = new NpgsqlConnection(connectionParamLoginer);
-
-            dataBase.connection.Open();*/
 
             using (NpgsqlCommand command = new NpgsqlCommand(sqlCheckUser, dataBase.Connection))
             {
