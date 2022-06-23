@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using PostgrServer.Constants;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,9 +29,7 @@ namespace PostgrServer
             string login = loginPass[0];
             string password = loginPass[1];
 
-            string sqlCheckUser = $"SELECT login, password, role FROM checkuser.managers where login = :login";
-
-            using (NpgsqlCommand command = new NpgsqlCommand(sqlCheckUser, dataBase.Connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(Query.VerifyUser, dataBase.Connection))
             {
                 var a = command.CreateParameter();
                 a.ParameterName = "login";
