@@ -9,13 +9,13 @@ using Npgsql;
 
 namespace Furnitsal
 {
-    public class DataBase
+    public class DataBaseConnection
     {
         public NpgsqlConnection connection;
         public string Ip;
         public string Port;
 
-        public DataBase(string ip, string port)
+        public DataBaseConnection(string ip, string port)
         {
             Ip = ip.Trim();
             Port = port.Trim();

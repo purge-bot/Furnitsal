@@ -1,12 +1,15 @@
-﻿using Npgsql;
-using PostgrServer.Constants;
+﻿using DbQuery;
+using Npgsql;
+using PostgrServer.DbCommander;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace PostgrServer
 {
-    public class User : IDataBase
+    public class User
     {
         public string IP;
         public string FirstName { get; private set; }
@@ -14,58 +17,39 @@ namespace PostgrServer
         public string LastName { get; private set; }
         public string Login { get; private set; }
         public string Role { get; private set; }
-        public NpgsqlConnection ConnectionDB { get; set; }
 
-        private static string[] PrepareData(byte[] requestBody)
+        public NpgsqlConnection ConnectionDB { get; set; }
+        public Client ConnectionClient;
+
+        public User (Client client)
         {
-            string request = Encoding.ASCII.GetString(requestBody);
-            string[] loginPass = request.Split('|', 2, StringSplitOptions.None);
-            return loginPass;
+            ConnectionClient = client;
         }
 
-        public bool Verification(byte[] requestBody, DataBase dataBase)
+        public bool Verification(byte[] requestBody, DataBase dataBase, out Query query)
         {
-            string[] loginPass = PrepareData(requestBody);
-            string login = loginPass[0];
-            string password = loginPass[1];
+            query = Query.ToQuery(requestBody);
+            ColumnQuery columnQuery = new ColumnQuery(dataBase.Connection, query);
+            query.Execute(columnQuery);
 
-            using (NpgsqlCommand command = new NpgsqlCommand(Query.VerifyUser, dataBase.Connection))
+            if (query.QueryResult.Count > 0 && (Encoding.UTF8.GetString(query.QueryResult[0]) == query.ExtraInformation[0]) && (Encoding.UTF8.GetString(query.QueryResult[1]) == query.ExtraInformation[1]))
             {
-                var a = command.CreateParameter();
-                a.ParameterName = "login";
-                a.Value = login;
-                command.Parameters.Add(a);
-
-                int b;
-                string val;
-                string val1;
-                string val2;
-
-                using (NpgsqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        b = reader.FieldCount;
-                        val = reader.GetString(0);
-                        val1 = reader.GetString(1);
-                        val2 = reader.GetString(2);
-
-                        if ((val == login) && (val1 == password))
-                        {
-                            Login = login;
-                            Role = val2;
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-
-
-                    return false;
-                }
+                Login = Encoding.UTF8.GetString(query.QueryResult[0]);
+                Role = Encoding.UTF8.GetString(query.QueryResult[2]);
+                query.ExecuteCode = 2;
+                return true;
             }
+            else
+            {
+                query.ExecuteCode = 3;
+                return false;
+            }
+        }
+
+        public void RemoveUser()
+        {
+            ConnectionDB?.Close();
+            ConnectionClient?.ClientClose();
         }
     }
 }

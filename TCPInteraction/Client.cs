@@ -11,7 +11,6 @@ namespace TCPInteraction
 
         private NetworkStream _stream { get { return socket.GetStream(); } }
 
-
         public Client(TcpClient client)
         {
             socket = client;

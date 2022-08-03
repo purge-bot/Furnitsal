@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Npgsql;
+using TCPInteraction;
+using DbQuery;
+using Furnitsal.DbCommander;
+using Furnitsal.Cript;
 
 namespace Furnitsal
 {
@@ -15,65 +19,31 @@ namespace Furnitsal
         public string LastName { get; private set; }
         public string Login { get; private set; }
         public string Role { get; private set; }
+        public Client Connection { get; private set; }
 
-        private User(string login, DataBase dataBase)
+        public User(Client client)
         {
-            Login = login;
+            Connection = client;
         }
 
-        public static User Instance(string login, string password, DataBase dataBase)
+        public bool Verification(string login, string password)
         {
-            /*SHA1Managed crypt = new SHA1Managed();
-            byte[] a = crypt.ComputeHash(Encoding.ASCII.GetBytes(password));
-            password = Encoding.UTF8.GetString(a); //Encoding.Default.GetString(a);*/
+            List<string> extraData = new List<string>();
+            extraData.Add(login);
+            extraData.Add(CriptString.GetHash(password));
 
-            return Verification(login, password, dataBase) ? new User(login, dataBase) : null;
-        }
+            Query query = new Query(extraData);
+            query.AddSql(Constants.VerifyUser);
+            query.AddParam("login", login);
+            ColumnQuery columnQuery = new ColumnQuery(Connection, 1, query);
+            query.Execute(columnQuery);
 
-        private static bool Verification(string login, string password, DataBase dataBase)
-        {
-            return false;
-            /*string connectionParamLoginer = $"Server={dataBase.Ip};Port={dataBase.Port};UserId=postgres;Password=wxkmjdt76;Database=shop";
-
-            string sqlCheckUser = $"SELECT login, password FROM checkuser.managers where login = :login";
-
-            dataBase.connection = new NpgsqlConnection(connectionParamLoginer);
-
-            dataBase.connection.Open();
-
-            using (NpgsqlCommand command = new NpgsqlCommand(sqlCheckUser, dataBase.connection))
+            if (query.ExecuteCode == 2)
             {
-                var a = command.CreateParameter();
-                a.ParameterName = "login";
-                a.Value = login;
-                command.Parameters.Add(a);
-
-                int b;
-                string val;
-                string val1;
-
-                NpgsqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    b = reader.FieldCount;
-                    val = reader.GetString(0);
-                    val1 = reader.GetString(1);
-
-                    if ((val == login) && (val1 == password))
-                    {
-                        dataBase.connection.Close();
-                        return true;
-                    }
-                    else
-                    {
-                        dataBase.connection.Close();
-                        return false;
-                    }
-                }
-
-                dataBase.connection.Close();
+                return true;
+            }
+            else
                 return false;
-            }*/
         }
     }
 }

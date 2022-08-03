@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PostgrServer
 {
-    class Request
+    public class Request
     {
         public byte ExecuteCode;
         public byte[] Length;

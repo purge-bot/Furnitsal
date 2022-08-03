@@ -7,6 +7,8 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using DbQuery;
+using PostgrServer.DbCommander;
 
 namespace PostgrServer
 {
@@ -79,7 +81,8 @@ namespace PostgrServer
             VerificationUser = 1,
             SuccessVerification = 2,
             FailVerification = 3,
-            Post = 101,
+            GetOrders = 10,
+            Post = 100,
             Get = 201
         }
 
@@ -88,22 +91,26 @@ namespace PostgrServer
             switch (inputRequest.ExecuteCode)
             {
                 case (byte)Code.VerificationUser:
-                    
-                    if(user.Verification(inputRequest.RequestBody, dataBaseServer))
+                    Query query;
+                    if(user.Verification(inputRequest.RequestBody, dataBaseServer, out query))
                     {
                         DataBase clientDB = new DataBase();
                         clientDB.Connect(user.Role, "3520189");
                         user.ConnectionDB = clientDB.Connection;
                         Users.Add(user.IP, user);
-                        return new Request("Done!", false, (byte)Code.SuccessVerification);
+                        return new Request((byte)Code.SuccessVerification, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
                     }
                     else
                     {
-                        return new Request("Fail!", false, (byte)Code.FailVerification);
+                        return new Request((byte)Code.FailVerification, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
                     }
 
-                case (byte)Code.Post:
-                    return new Request("Done!", false, (byte)Code.Post);
+                case (byte)Code.Get:
+                    Query GetQuery = Query.ToQuery(inputRequest.RequestBody);
+                    TableQuery tableQuery = new TableQuery(user.ConnectionDB, GetQuery);
+                    GetQuery.Execute(tableQuery);
+                    byte[] outputRequest = tableQuery.QueryTarget.ToBytes();
+                    return new Request((byte)Code.Get, outputRequest, BitConverter.GetBytes(outputRequest.Length));
             }
 
             return new Request("Code Error");
@@ -112,12 +119,6 @@ namespace PostgrServer
         private static void ClientThread(object clientSocket)
         {
             Client client = new Client((TcpClient)clientSocket);
-
-            if (Users.ContainsKey(client.IPClient))
-            {
-                client.ClientClose();
-                return;
-            }
             
             if (Users.ContainsKey(client.IPClient))
             {
@@ -128,7 +129,7 @@ namespace PostgrServer
 
             Console.WriteLine("Клиент подключен: " + client.IPClient);
 
-            User user = new User();
+            User user = new User(client);
             user.IP = client.IPClient;
 
             while (client.socket.Connected)
@@ -140,20 +141,24 @@ namespace PostgrServer
                 {
                     Users.Remove(user.IP);
                     Console.WriteLine(inputRequest.ExecuteCode + " - код выполнения;\n" + BitConverter.ToInt32(inputRequest.Length, 0) + " - длина сообщения;\n" + inputRequest.ToString() + " - сообщение.");
-                    user.ConnectionDB?.Close();
-                    Console.WriteLine("Клиент отключен");
-                    client.ClientClose();
+                    Console.WriteLine($"{user.IP}: Клиент отключен");
+                    user.RemoveUser();
                     return;
                 }
 
                 Console.WriteLine(inputRequest.ExecuteCode + " - код выполнения;\n" + BitConverter.ToInt32(inputRequest.Length, 0) + " - длина сообщения;\n" + inputRequest.ToString() + " - сообщение.");
 
-                if (Enum.IsDefined(typeof(Code), inputRequest.ExecuteCode))
+                Request outputRequest = Selector(inputRequest, user);
+
+                if (outputRequest.ExecuteCode == (byte)Code.FailVerification)
                 {
-
-                    client.PostRequest(Selector(inputRequest, user));
+                    client.PostRequest(outputRequest);
+                    Users.Remove(user.IP);
+                    user.RemoveUser();
                 }
-
+                else
+                    client.PostRequest(outputRequest);
+                    
                 if (client.socket.Connected == false)
                 {
                     Users.Remove(user.IP);

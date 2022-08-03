@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostgrServer", "..\PostgrSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPInteraction", "..\TCPInteraction\TCPInteraction.csproj", "{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQuery", "..\DbQuery\DbQuery.csproj", "{FBCA27FB-0667-47F3-8CDC-6B7024721254}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

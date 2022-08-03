@@ -44,8 +44,6 @@ namespace Furnitsal
             this.IpLabel = new System.Windows.Forms.Label();
             this.PortLabel = new System.Windows.Forms.Label();
             this.SaveSettingsButton = new System.Windows.Forms.Button();
-            this.Connect = new System.Windows.Forms.Button();
-            this.messageButton = new System.Windows.Forms.Button();
             this.LoginPanel.SuspendLayout();
             this.PasswordPanel.SuspendLayout();
             this.SuspendLayout();
@@ -213,31 +211,11 @@ namespace Furnitsal
             this.SaveSettingsButton.Visible = false;
             this.SaveSettingsButton.Click += new System.EventHandler(this.SaveSettingsButton_Click);
             // 
-            // Connect
-            // 
-            this.Connect.Location = new System.Drawing.Point(240, 13);
-            this.Connect.Name = "Connect";
-            this.Connect.Size = new System.Drawing.Size(75, 23);
-            this.Connect.TabIndex = 15;
-            this.Connect.Text = "Connect";
-            this.Connect.UseVisualStyleBackColor = true;
-            // 
-            // messageButton
-            // 
-            this.messageButton.Location = new System.Drawing.Point(240, 42);
-            this.messageButton.Name = "messageButton";
-            this.messageButton.Size = new System.Drawing.Size(75, 23);
-            this.messageButton.TabIndex = 16;
-            this.messageButton.Text = "Message";
-            this.messageButton.UseVisualStyleBackColor = true;
-            // 
             // Authorize
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(334, 293);
-            this.Controls.Add(this.messageButton);
-            this.Controls.Add(this.Connect);
+            this.ClientSize = new System.Drawing.Size(330, 291);
             this.Controls.Add(this.SaveSettingsButton);
             this.Controls.Add(this.PortLabel);
             this.Controls.Add(this.IpLabel);
@@ -252,7 +230,7 @@ namespace Furnitsal
             this.Controls.Add(this.LoginButton);
             this.Controls.Add(this.exitButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.MaximumSize = new System.Drawing.Size(800, 800);
+            this.MaximumSize = new System.Drawing.Size(800, 799);
             this.Name = "Authorize";
             this.Text = "Authorize";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Authorize_FormClosing);
@@ -284,7 +262,5 @@ namespace Furnitsal
         private System.Windows.Forms.Label IpLabel;
         private System.Windows.Forms.Label PortLabel;
         private System.Windows.Forms.Button SaveSettingsButton;
-        private System.Windows.Forms.Button Connect;
-        private System.Windows.Forms.Button messageButton;
     }
 }

@@ -12,6 +12,9 @@ using System.Xml;
 using System.IO;
 using System.Net.Sockets;
 using Furnitsal.Cript;
+using DbQuery;
+using TCPInteraction;
+using Furnitsal.DbCommander;
 
 namespace Furnitsal
 {
@@ -20,22 +23,14 @@ namespace Furnitsal
         /// <summary> Создание подключения к БД и аутентификация  </summary>
         private void Login(string login, string password, string ip = "127.0.0.1", string port = "5432")
         {
-            //DataBase shop = new DataBase(ip, port);
-
-            //User user = User.Instance(login, password, shop);
-
-
             if (client == null)
             {
                 TcpClient socket = new TcpClient("192.168.1.68", 7000);
                 client = new TCPInteraction.Client(socket);
             }
 
-            string requestString = login + "|" + CriptString.GetHash(password);
-
-            client.PostRequest(new TCPInteraction.Request(requestString, 1, false));
-
-            if(client.ReadRequest().ExecuteCode == 2)
+            _user = new User(client);
+            if (_user.Verification(login, password))
             {
                 WindowClose();
             }
@@ -43,39 +38,21 @@ namespace Furnitsal
             {
                 AuthorizeError();
             }
-
-            /*User user = new User.Instance();
-
-            if (shop.Connect(user))
-            {
-                WindowClose();
-            }
-            else
-            {
-                AuthorizeError();
-            }*/
-
-            /*if (shop.Connect(login, password) != null)
-            {
-                User user = User.Instance();
-                WindowClose();
-            }
-            else
-            {
-                AuthorizeError();
-            }*/
+            
         }
 
         /// <summary> Закрытие окна </summary>
         private void WindowClose()
         {
             canClosingWindow = true;
-            this.Close();
+            this.DialogResult = DialogResult.OK;
         }
 
         /// <summary> Обработчик ошибки аутентификации </summary>
         private void AuthorizeError()
         {
+            client = null;
+
             PasswordTextBox.Clear();
             
             AuthorizeErrorLabel.Text = "Неверный логин или пароль";
@@ -147,6 +124,7 @@ namespace Furnitsal
             }     
         }
 
+        public User _user;
         private string ip;
         private string port;
         private string settingsFileName = "Default_settings";
@@ -156,7 +134,7 @@ namespace Furnitsal
         /// <summary> Возможность закрытия окна, по умолчанию false </summary>
         private bool canClosingWindow = false;
 
-        public Authorize()
+        public Authorize(User user)
         {
             InitializeComponent();
             this.KeyPreview = true;
@@ -173,6 +151,8 @@ namespace Furnitsal
                 textWriter.WriteEndElement();
                 textWriter.Close();
             }
+
+            _user = user;
         }
 
         private void Authorize_Load(object sender, EventArgs e)
@@ -205,8 +185,6 @@ namespace Furnitsal
                 Login(login, password, ip, port);
             else
                 Login(login, password);
-
-
         }
 
         private void Authorize_KeyDown(object sender, KeyEventArgs e)

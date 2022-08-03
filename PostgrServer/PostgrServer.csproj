@@ -6,7 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="5.0.7" />
+    <PackageReference Include="Npgsql" Version="6.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DbQuery">
+      <HintPath>..\DbQuery\bin\Debug\netstandard2.0\DbQuery.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using DbQuery;
 using Npgsql;
 
 namespace PostgrServer
@@ -32,10 +34,32 @@ namespace PostgrServer
 
         }
 
-        public string Select()
+        public string Select(Query query)
         {
-            return "1234123";
+            return "asd";
+            /*using (NpgsqlCommand command = new NpgsqlCommand(query.SqlQuery, connection))
+            {
+                command.Parameters.AddRange(CollectionParameters.ToArray());
+                query.QueryResult = new List<byte[]>();
+                using (NpgsqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int fieldCount = reader.FieldCount;
+                        for (int i = 0; i < fieldCount; i++)
+                        {
+                            Stream stream = reader.GetStream(i);
+                            byte[] buffer = new byte[stream.Length];
+                            stream.Read(buffer, 0, (int)stream.Length);
+                            QueryResult.Add(buffer);
+                            stream.Close();
+                        }
+                    }
+                    return QueryResult;
+                }*/
         }
+
+
 
         public void ConnectionClose()
         {
