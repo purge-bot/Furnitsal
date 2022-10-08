@@ -10,16 +10,15 @@ namespace DbQuery
     [Serializable]
     public class Query
     {
-        public List<byte[]> QueryResult;
         public List<string> ExtraInformation;
         public byte ExecuteCode;
         public string SqlQuery { get; private set; }
+        public DataTable TableResult;
 
         private readonly Dictionary<string, object> _paramAttr;
 
         [NonSerialized]
         public List<NpgsqlParameter> CollectionParameters;
-
 
         public Query(List<string> extraInformation = null)
         {
@@ -64,14 +63,14 @@ namespace DbQuery
             }
         }
 
-        public void Execute(IQueryExecutor executor)
+        public void Execute(QueryExec executor)
         {
             if (executor is null)
             {
                 throw new ArgumentNullException(nameof(executor));
             }
 
-            executor.Execute();
+            executor.Execute(this);
         }
 
         private void CreateParameters(Dictionary<string, object> collectionParameters)

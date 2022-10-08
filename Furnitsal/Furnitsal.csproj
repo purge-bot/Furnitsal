@@ -107,7 +107,6 @@
     </Compile>
     <Compile Include="Cript\CriptString.cs" />
     <Compile Include="DataBaseConnection.cs" />
-    <Compile Include="DbCommander\ColumnQuery.cs" />
     <Compile Include="DbCommander\TableQuery.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

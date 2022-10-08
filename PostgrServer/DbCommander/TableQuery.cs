@@ -8,32 +8,27 @@ using System.Text;
 
 namespace PostgrServer.DbCommander
 {
-    internal class TableQuery : IQueryExecutor
+    internal class TableQuery : QueryExec
     {
-        public Query QueryTarget { get; set; }
-
         private NpgsqlConnection _connection;
 
-        public TableQuery(NpgsqlConnection connection, Query query)
+        public TableQuery(NpgsqlConnection connection)
         {
-            QueryTarget = query;
             _connection = connection;
         }
 
-
-        public void Execute()
+        protected override void ImplementExec(Query query)
         {
-            using (NpgsqlCommand command = new NpgsqlCommand(QueryTarget.SqlQuery, _connection))
+            using (NpgsqlCommand command = new NpgsqlCommand(query.SqlQuery, _connection))
             {
-                command.Parameters.AddRange(QueryTarget.CollectionParameters.ToArray());
-                QueryTarget.QueryResult = new List<byte[]>();
+                command.Parameters.AddRange(query.CollectionParameters.ToArray());
                 MemoryStream memoryStream = new MemoryStream();
                 using (NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(command))
                 {
-                    DataSet dataSet = new DataSet();
-                    int i = adapter.Fill(dataSet);
-                    dataSet.WriteXml(memoryStream);
-                    QueryTarget.QueryResult.Add(memoryStream.ToArray());
+                    DataSet Table = new DataSet();
+                    int i = adapter.Fill(Table);
+                    Table.WriteXml(memoryStream);
+                    query.TableResult = Table.Tables[0];
                 }
                 memoryStream.Close();
             }

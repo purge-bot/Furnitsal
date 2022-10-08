@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Linq;
+using System.Data;
 
 namespace PostgrServer
 {
@@ -29,14 +31,20 @@ namespace PostgrServer
         public bool Verification(byte[] requestBody, DataBase dataBase, out Query query)
         {
             query = Query.ToQuery(requestBody);
-            ColumnQuery columnQuery = new ColumnQuery(dataBase.Connection, query);
-            query.Execute(columnQuery);
+            TableQuery executor = new TableQuery(dataBase.Connection);
+            query.Execute(executor);
 
-            if (query.QueryResult.Count > 0 && (Encoding.UTF8.GetString(query.QueryResult[0]) == query.ExtraInformation[0]) && (Encoding.UTF8.GetString(query.QueryResult[1]) == query.ExtraInformation[1]))
+            if (query.TableResult.Rows.Count == 0)
             {
-                Login = Encoding.UTF8.GetString(query.QueryResult[0]);
-                Role = Encoding.UTF8.GetString(query.QueryResult[2]);
+                query.ExecuteCode = 3;
+                return false;
+            }
+
+            if (query.TableResult.Rows[0].Field<string>("password") == query.ExtraInformation[1])
+            {
                 query.ExecuteCode = 2;
+                Login = query.TableResult.Rows[0].Field<string>("login");
+                Role = query.TableResult.Rows[0].Field<string>("role");
                 return true;
             }
             else

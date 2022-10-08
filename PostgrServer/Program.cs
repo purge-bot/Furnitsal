@@ -21,8 +21,6 @@ namespace PostgrServer
         {
             try
             {
-                //while (Server.DataBaseConnection == null)
-                // {
                 Console.WriteLine("Подключение к базе данных");
                 Console.WriteLine("Введите логин");
                 string loginDB = "postgres";// Console.ReadLine().ToLower().Trim();
@@ -39,7 +37,6 @@ namespace PostgrServer
                 {
                     Console.WriteLine(e.Message);
                 }
-                //}
 
                 while (Server.serverSocket == null)
                 {
@@ -94,8 +91,7 @@ namespace PostgrServer
                     Query query;
                     if(user.Verification(inputRequest.RequestBody, dataBaseServer, out query))
                     {
-                        DataBase clientDB = new DataBase();
-                        clientDB.Connect(user.Role, "3520189");
+                        DataBase clientDB = new DataBase(user.Role, "3520189");
                         user.ConnectionDB = clientDB.Connection;
                         Users.Add(user.IP, user);
                         return new Request((byte)Code.SuccessVerification, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
@@ -106,10 +102,10 @@ namespace PostgrServer
                     }
 
                 case (byte)Code.Get:
-                    Query GetQuery = Query.ToQuery(inputRequest.RequestBody);
-                    TableQuery tableQuery = new TableQuery(user.ConnectionDB, GetQuery);
-                    GetQuery.Execute(tableQuery);
-                    byte[] outputRequest = tableQuery.QueryTarget.ToBytes();
+                    Query getQuery = Query.ToQuery(inputRequest.RequestBody);
+                    TableQuery tableQuery = new TableQuery(user.ConnectionDB);
+                    getQuery.Execute(tableQuery);
+                    byte[] outputRequest = getQuery.ToBytes();
                     return new Request((byte)Code.Get, outputRequest, BitConverter.GetBytes(outputRequest.Length));
             }
 

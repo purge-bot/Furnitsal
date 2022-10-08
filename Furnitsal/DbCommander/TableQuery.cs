@@ -11,35 +11,38 @@ using TCPInteraction;
 
 namespace Furnitsal.DbCommander
 {
-    class TableQuery : IQueryExecutor
+    class TableQuery : QueryExec
     {
-        public DataSet TableData;
         public byte ExecuteCode;
-        public Query QueryTarget { get; set; }
 
         private readonly Client _client;
 
-        public TableQuery(Client client, byte executeCode, Query query)
+        public TableQuery(Client client, byte executeCode)
         {
             ExecuteCode = executeCode;
             _client = client;
-            QueryTarget = query;
         }
 
-        public void Execute()
+        protected override void ImplementExec(Query query)
         {
-            byte[] outputRequest = QueryTarget.ToBytes();
-            _client.PostRequest(new Request(ExecuteCode, outputRequest, BitConverter.GetBytes(outputRequest.Length)));
+            PostQuery(query);
 
+            ReadQuery(query);
+        }
+
+        private void PostQuery(Query query)
+        {
+            byte[] outputRequest = query.ToBytes();
+            _client.PostRequest(new Request(ExecuteCode, outputRequest, BitConverter.GetBytes(outputRequest.Length)));
+        }
+
+        private void ReadQuery(Query query)
+        {
             Request inputRequest = _client.ReadRequest();
             Query inputQuery = Query.ToQuery(inputRequest.RequestBody);
 
-            QueryTarget.QueryResult = inputQuery.QueryResult;
-            QueryTarget.ExecuteCode = inputQuery.ExecuteCode;
-
-            TableData = new DataSet();
-            MemoryStream stream = new MemoryStream(QueryTarget.QueryResult[0]);
-            TableData.ReadXml(stream);
+            query.TableResult = inputQuery.TableResult;
+            query.ExecuteCode = inputQuery.ExecuteCode;
         }
     }
 }
