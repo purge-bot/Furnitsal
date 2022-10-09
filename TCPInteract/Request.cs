@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace PostgrServer
+namespace TCPInteract
 {
     public class Request
     {
@@ -20,7 +20,7 @@ namespace PostgrServer
             RequestBody = requestBody;
         }
 
-        public Request(string requestBody, bool file = false, byte executeCode = 255)
+        public Request(string requestBody, byte executeCode = 255, bool file = false)
         {
             _file = file;
             ExecuteCode = executeCode;

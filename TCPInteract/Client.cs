@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace PostgrServer
+namespace TCPInteract
 {
     public class Client
     {
@@ -38,7 +38,7 @@ namespace PostgrServer
                     total += socket.Client.Receive(request, length - total, SocketFlags.None);
                 }
                 while (total < length && _stream.DataAvailable);
-                
+
                 _stream.Flush();
 
                 return new Request(executeCode, request, BitConverter.GetBytes(length));
@@ -47,7 +47,7 @@ namespace PostgrServer
             {
                 ClientClose();
                 return new Request(e.Message);
-            }          
+            }
         }
 
         public void PostRequest(Request request)

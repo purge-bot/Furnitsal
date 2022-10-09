@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace PostgrServer
+namespace TCPInteract
 {
-    static class Server
+    public static class Server
     {
         public static TcpListener serverSocket;
 
@@ -15,7 +15,7 @@ namespace PostgrServer
 
         public static void ClientConnecting(out TcpClient clientSocket)
         {
-                clientSocket = serverSocket.AcceptTcpClient();
+            clientSocket = serverSocket.AcceptTcpClient();
         }
 
         public static void ServerStop()

@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furnitsal", "Furnitsal.cspr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostgrServer", "..\PostgrServer\PostgrServer.csproj", "{09B8FFA6-049C-4D6A-898A-A417585A5257}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPInteraction", "..\TCPInteraction\TCPInteraction.csproj", "{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQuery", "..\DbQuery\DbQuery.csproj", "{FBCA27FB-0667-47F3-8CDC-6B7024721254}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQuery", "..\DbQuery\DbQuery.csproj", "{FBCA27FB-0667-47F3-8CDC-6B7024721254}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPInteract", "..\TCPInteract\TCPInteract.csproj", "{2482DA9C-AF3A-4F6C-8BB8-18EB9610212D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{09B8FFA6-049C-4D6A-898A-A417585A5257}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09B8FFA6-049C-4D6A-898A-A417585A5257}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09B8FFA6-049C-4D6A-898A-A417585A5257}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70ACA160-F26B-4F35-9A82-3C11BEE0AA27}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBCA27FB-0667-47F3-8CDC-6B7024721254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2482DA9C-AF3A-4F6C-8BB8-18EB9610212D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2482DA9C-AF3A-4F6C-8BB8-18EB9610212D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2482DA9C-AF3A-4F6C-8BB8-18EB9610212D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2482DA9C-AF3A-4F6C-8BB8-18EB9610212D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

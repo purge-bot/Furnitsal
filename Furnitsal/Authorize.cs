@@ -13,8 +13,8 @@ using System.IO;
 using System.Net.Sockets;
 using Furnitsal.Cript;
 using DbQuery;
-using TCPInteraction;
 using Furnitsal.DbCommander;
+using TCPInteract;
 
 namespace Furnitsal
 {
@@ -26,7 +26,7 @@ namespace Furnitsal
             if (client == null)
             {
                 TcpClient socket = new TcpClient("192.168.1.68", 7000);
-                client = new TCPInteraction.Client(socket);
+                client = new Client(socket);
             }
 
             _user = new User(client);
@@ -128,7 +128,7 @@ namespace Furnitsal
         private string ip;
         private string port;
         private string settingsFileName = "Default_settings";
-        TCPInteraction.Client client;
+        Client client;
 
 
         /// <summary> Возможность закрытия окна, по умолчанию false </summary>

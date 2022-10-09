@@ -14,6 +14,9 @@
     <Reference Include="DbQuery">
       <HintPath>..\DbQuery\bin\Debug\netstandard2.0\DbQuery.dll</HintPath>
     </Reference>
+    <Reference Include="TCPInteract">
+      <HintPath>..\TCPInteract\bin\Debug\netstandard2.0\TCPInteract.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

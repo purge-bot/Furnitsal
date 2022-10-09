@@ -94,8 +94,8 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TCPInteraction">
-      <HintPath>..\TCPInteraction\bin\Debug\TCPInteraction.dll</HintPath>
+    <Reference Include="TCPInteract">
+      <HintPath>..\TCPInteract\bin\Debug\netstandard2.0\TCPInteract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

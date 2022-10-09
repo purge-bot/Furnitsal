@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using DbQuery;
 using PostgrServer.DbCommander;
+using TCPInteract;
 
 namespace PostgrServer
 {

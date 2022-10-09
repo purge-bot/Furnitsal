@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Linq;
 using System.Data;
+using TCPInteract;
 
 namespace PostgrServer
 {
