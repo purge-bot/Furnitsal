@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TCPInteract;
 
 namespace Furnitsal
 {
@@ -31,7 +32,7 @@ namespace Furnitsal
         private void OrdersListMenu_Click(object sender, EventArgs e)
         {
             Query query = new Query();
-            TableQuery exec = new TableQuery(user.Connection, 201);
+            TableQuery exec = new TableQuery(user.Connection, (byte)ExecuteCode.Get);
             query.AddSql("Select * from managers");
             query.Execute(exec);
 

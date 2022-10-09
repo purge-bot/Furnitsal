@@ -35,15 +35,10 @@ namespace Furnitsal
             Query query = new Query(extraData);
             query.AddSql(Constants.VerifyUser);
             query.AddParam("login", login);
-            TableQuery executor = new TableQuery(Connection, 1);
+            TableQuery executor = new TableQuery(Connection, ((byte)ExecuteCode.VerificationUser));
             query.Execute(executor);
 
-            if (query.ExecuteCode == 2)
-            {
-                return true;
-            }
-            else
-                return false;
+            return query.ExecuteCode == ((byte)ExecuteCode.VerificationSuccess);
         }
     }
 }

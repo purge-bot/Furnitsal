@@ -74,40 +74,30 @@ namespace PostgrServer
             }
         }
 
-        enum Code : byte
-        {
-            VerificationUser = 1,
-            SuccessVerification = 2,
-            FailVerification = 3,
-            GetOrders = 10,
-            Post = 100,
-            Get = 201
-        }
-
         private static Request Selector(Request inputRequest, User user)
         {
             switch (inputRequest.ExecuteCode)
             {
-                case (byte)Code.VerificationUser:
+                case (byte)ExecuteCode.VerificationUser:
                     Query query;
                     if(user.Verification(inputRequest.RequestBody, dataBaseServer, out query))
                     {
                         DataBase clientDB = new DataBase(user.Role, "3520189");
                         user.ConnectionDB = clientDB.Connection;
                         Users.Add(user.IP, user);
-                        return new Request((byte)Code.SuccessVerification, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
+                        return new Request((byte)ExecuteCode.VerificationSuccess, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
                     }
                     else
                     {
-                        return new Request((byte)Code.FailVerification, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
+                        return new Request((byte)ExecuteCode.VerificationFail, query.ToBytes(), BitConverter.GetBytes(query.ToBytes().Length));
                     }
 
-                case (byte)Code.Get:
+                case (byte)ExecuteCode.Get:
                     Query getQuery = Query.ToQuery(inputRequest.RequestBody);
                     TableQuery tableQuery = new TableQuery(user.ConnectionDB);
                     getQuery.Execute(tableQuery);
                     byte[] outputRequest = getQuery.ToBytes();
-                    return new Request((byte)Code.Get, outputRequest, BitConverter.GetBytes(outputRequest.Length));
+                    return new Request((byte)ExecuteCode.Get, outputRequest, BitConverter.GetBytes(outputRequest.Length));
             }
 
             return new Request("Code Error");
@@ -147,7 +137,7 @@ namespace PostgrServer
 
                 Request outputRequest = Selector(inputRequest, user);
 
-                if (outputRequest.ExecuteCode == (byte)Code.FailVerification)
+                if (outputRequest.ExecuteCode == (byte)ExecuteCode.VerificationFail)
                 {
                     client.PostRequest(outputRequest);
                     Users.Remove(user.IP);
