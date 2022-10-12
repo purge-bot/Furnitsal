@@ -24,6 +24,7 @@ namespace DbQuery
         {
             ExtraInformation = extraInformation;
             _paramAttr = new Dictionary<string, object>();
+            CollectionParameters = new List<NpgsqlParameter>();
         }
 
         public void AddSql(string SQLText)
@@ -38,7 +39,9 @@ namespace DbQuery
 
         public void Clear()
         {
+            CollectionParameters.Clear();
             _paramAttr.Clear();
+            TableResult.Clear();
             SqlQuery = null;
         }
 

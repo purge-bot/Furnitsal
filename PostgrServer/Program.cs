@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using DbQuery;
 using PostgrServer.DbCommander;
 using TCPInteract;
+using PostgrServer.DbCommander.Reformat;
 
 namespace PostgrServer
 {
@@ -96,6 +97,8 @@ namespace PostgrServer
                     Query getQuery = Query.ToQuery(inputRequest.RequestBody);
                     TableQuery tableQuery = new TableQuery(user.ConnectionDB);
                     getQuery.Execute(tableQuery);
+                    TableFormatter formatter = new TableFormatter(user.ConnectionDB);
+                    formatter.ReformatTable(getQuery.TableResult);
                     byte[] outputRequest = getQuery.ToBytes();
                     return new Request((byte)ExecuteCode.Get, outputRequest, BitConverter.GetBytes(outputRequest.Length));
             }

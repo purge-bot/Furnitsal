@@ -33,7 +33,7 @@ namespace Furnitsal
         {
             Query query = new Query();
             TableQuery exec = new TableQuery(user.Connection, (byte)ExecuteCode.Get);
-            query.AddSql("Select * from managers");
+            query.AddSql("Select * from product");
             query.Execute(exec);
 
             dataGridView1.DataSource = query.TableResult;
