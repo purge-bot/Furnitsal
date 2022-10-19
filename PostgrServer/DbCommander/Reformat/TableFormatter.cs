@@ -24,7 +24,8 @@ namespace PostgrServer.DbCommander.Reformat
                 string tableName = FindTableName(query, item.ColumnName);
 
                 string columnNameFromDescription = FindColumnDescription(query, tableName, item.ColumnName);
-                if (columnNameFromDescription != null)
+
+                if (!targetTable.Columns.Contains(columnNameFromDescription))
                     item.ColumnName = columnNameFromDescription;
             }
         }
@@ -32,8 +33,10 @@ namespace PostgrServer.DbCommander.Reformat
         private string FindTableName(Query query, string columnName)
         {
             query.AddSql(Constants.TableNameByColumn);
+
             NpgsqlParameter parameter = new NpgsqlParameter("column_name", columnName);
             query.CollectionParameters.Add(parameter);
+
             query.Execute(new TableQuery(_dbConnection));
             query.Clear();
             return query.TableResult.Rows[0].Field<string>("table_name");
@@ -42,20 +45,17 @@ namespace PostgrServer.DbCommander.Reformat
         private string FindColumnDescription(Query query, string tableName, string columnName)
         {
             query.AddSql(Constants.ColumnDescription);
+
             NpgsqlParameter tableParameter = new NpgsqlParameter("table_name", tableName);
             query.CollectionParameters.Add(tableParameter);  
             NpgsqlParameter columnParameter = new NpgsqlParameter("column_name", columnName);
             query.CollectionParameters.Add(columnParameter);
+
             query.Execute(new TableQuery(_dbConnection));
             query.Clear();
-            try
-            {
-                return query.TableResult.Rows[0].Field<string>("description");
-            }
-            catch
-            {
-                return null;
-            }
+
+            return (query.TableResult.Rows.Count > 0) ? query.TableResult.Rows[0].Field<string>("description") : columnName;
+
         }
     }
 }
