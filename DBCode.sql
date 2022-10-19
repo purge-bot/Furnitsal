@@ -97,3 +97,19 @@ CREATE TABLE textile(
 );
 
 comment on column textile.textile_name is 'материал';
+
+CREATE TABLE clients(
+	id SERIAL not null PRIMARY KEY,
+	first_name varchar(32) not null,
+	second_name varchar(32) not null,
+	third_name varchar(32),
+	address varchar(128) not null
+);
+
+comment on column clients.first_name is 'имя';
+comment on column clients.second_name is 'фамилия';
+comment on column clients.third_name is 'отчество';
+comment on column clients.address is 'адрес';
+
+alter table orders
+	add foreign key (id_client) references clients(id)
