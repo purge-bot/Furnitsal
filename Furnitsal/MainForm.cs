@@ -16,6 +16,7 @@ namespace Furnitsal
     public partial class MainForm : Form
     {
         public User user;
+        private DataTable _tableOrders;
 
         public MainForm()
         {
@@ -33,10 +34,30 @@ namespace Furnitsal
         {
             Query query = new Query();
             TableQuery exec = new TableQuery(user.Connection, (byte)ExecuteCode.Get);
-            query.AddSql("Select * from product");
+            query.AddSql("Select * from orders");
             query.Execute(exec);
 
-            dataGridView1.DataSource = query.TableResult;
+            _tableOrders = query.TableResult;
+            UserProject_dataGrid.DataSource = _tableOrders;
+            
+        }
+
+        private void Add_button_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UserProject_dataGrid_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (_tableOrders.Rows.Count == 0 || _tableOrders.Rows.Count < e.RowIndex)
+                return;
+
+            int id = _tableOrders.Rows[e.RowIndex].Field<int>("id");
+
+            MessageBox.Show(id.ToString());
+
+            OrderForm order = new OrderForm(user, id);
+            DialogResult dialogResult = order.ShowDialog(this);
             
         }
     }

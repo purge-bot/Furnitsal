@@ -10,6 +10,8 @@ namespace TCPInteract
         VerificationSuccess = 2,
         VerificationFail = 3,
         Post = 100,
-        Get = 200
+        Get = 200,
+        Update = 210,
+        UpdateError = 211
     }
 }
