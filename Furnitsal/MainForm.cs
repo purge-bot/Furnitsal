@@ -44,7 +44,8 @@ namespace Furnitsal
 
         private void Add_button_Click(object sender, EventArgs e)
         {
-
+            OrderForm order = new OrderForm(user);
+            DialogResult dialogResult = order.ShowDialog(this);
         }
 
         private void UserProject_dataGrid_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)

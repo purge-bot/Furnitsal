@@ -37,7 +37,7 @@ namespace Furnitsal
             query.AddParam("login", login);
             TableQuery executor = new TableQuery(Connection, ((byte)ExecuteCode.VerificationUser));
             query.Execute(executor);
-
+            Login = login;
             return query.ExecuteCode == ((byte)ExecuteCode.VerificationSuccess);
         }
     }

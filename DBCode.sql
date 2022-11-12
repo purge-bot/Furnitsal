@@ -59,7 +59,7 @@ comment on column status.status_name is 'статус';
 comment on column status.is_final is 'выполнение';
 	
 CREATE TABLE divan(
-	article serial not null primary key,
+	article integer not null primary key,
 	fasteners_type varchar(32),
 	softness_name varchar(32),
 	mechanism varchar(32),
@@ -112,4 +112,36 @@ comment on column clients.third_name is 'отчество';
 comment on column clients.address is 'адрес';
 
 alter table orders
-	add foreign key (id_client) references clients(id)
+	add foreign key (id_client) references clients(id);
+	
+alter table clients
+	drop column first_name;
+	
+alter table clients
+	drop column second_name;
+	
+alter table clients
+	drop column third_name;
+	
+alter table clients
+	add column full_name varchar(128) not null;
+	
+comment on column clients.full_name is 'ФИО';
+
+alter table clients
+	add column phone_number varchar(64) not null;
+	
+comment on column clients.phone_number is 'Телефон';	
+
+alter table product 
+	add foreign key (article) references Divan(article);
+	
+alter table product 
+	add foreign key (type_code) references product_type(type_code);
+	
+alter table order_structure 
+	add foreign key (article) references product(article);
+	
+alter table order_structure 
+	add foreign key (id_order) references orders(id);
+	

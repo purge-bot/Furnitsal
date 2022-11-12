@@ -10,7 +10,7 @@ namespace DbQuery
     [Serializable]
     public class Query
     {
-        public List<string> ExtraInformation;
+        public List<string> ExtraInformation = new List<string>();
         public byte ExecuteCode;
         public string SqlQuery { get; private set; }
         public DataTable TableResult;
@@ -22,14 +22,18 @@ namespace DbQuery
 
         public Query(List<string> extraInformation = null)
         {
-            ExtraInformation = extraInformation;
+            SqlQuery = "";
+
+            if (extraInformation != null)
+                ExtraInformation = extraInformation;
+
             _paramAttr = new Dictionary<string, object>();
             CollectionParameters = new List<NpgsqlParameter>();
         }
 
         public void AddSql(string SQLText)
         {
-            SqlQuery = SQLText;
+            SqlQuery += SQLText;
         }
 
         public void AddParam(string paramName, object paramValue)
@@ -39,9 +43,9 @@ namespace DbQuery
 
         public void Clear()
         {
+            ExtraInformation.Clear();
             CollectionParameters.Clear();
             _paramAttr.Clear();
-            TableResult.Clear();
             SqlQuery = null;
         }
 

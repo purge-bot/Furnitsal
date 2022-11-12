@@ -101,6 +101,12 @@ namespace PostgrServer
                     formatter.ReformatTable(getQuery.TableResult);
                     byte[] outputRequest = getQuery.ToBytes();
                     return new Request((byte)ExecuteCode.Get, outputRequest, BitConverter.GetBytes(outputRequest.Length));
+
+                case (byte)ExecuteCode.Post:
+                    Query nonQuery = Query.ToQuery(inputRequest.RequestBody);
+                    nonQuery.Execute(new NonQuery(user.ConnectionDB));
+                    byte[] emptyRequest= nonQuery.ToBytes();
+                    return new Request((byte)ExecuteCode.Get, emptyRequest, BitConverter.GetBytes(emptyRequest.Length));
             }
 
             return new Request("Code Error");
